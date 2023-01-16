@@ -121,7 +121,7 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 1280);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -314,7 +314,9 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+#include "usart.h"
+#include "logger.h"
+#define MAX_MESSAGE_LENGTH 100
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -329,10 +331,25 @@ void StartDefaultTask(void const * argument)
   /* init code for LWIP */
   MX_LWIP_Init();
   /* USER CODE BEGIN 5 */
+  usart_Open();
   /* Infinite loop */
+  uint8_t send[] = "Send message\r\n";
+  uint8_t recv[MAX_MESSAGE_LENGTH] = {0};
+  uint16_t recvLength = 0;
   for(;;)
   {
-    osDelay(1);
+	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_SET);
+	  osDelay(1000);
+	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);
+	  osDelay(1000);
+	  if (usart_Send((char*)send, sizeof(send)-1))
+		  logger("SEND - %s", send);
+	  recvLength = usart_Recv((char*)recv, MAX_MESSAGE_LENGTH-1);
+	  if (recvLength)
+	  {
+		  recv[recvLength] = 0;
+		  logger("RECV - %s\r\n", recv);
+	  }
   }
   /* USER CODE END 5 */
 }
