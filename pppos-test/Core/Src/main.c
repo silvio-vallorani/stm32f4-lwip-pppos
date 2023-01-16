@@ -316,6 +316,8 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 #include "usart.h"
 #include "logger.h"
+#include "sockets.h"
+typedef uint32_t SOCKET;
 #define MAX_MESSAGE_LENGTH 100
 /* USER CODE END 4 */
 
@@ -332,24 +334,49 @@ void StartDefaultTask(void const * argument)
   MX_LWIP_Init();
   /* USER CODE BEGIN 5 */
   usart_Open();
+  MX_LWIP_Init();
   /* Infinite loop */
-  uint8_t send[] = "Send message\r\n";
-  uint8_t recv[MAX_MESSAGE_LENGTH] = {0};
-  uint16_t recvLength = 0;
+
+  uint8_t sendStr[] = "Test message TCP/IP.";
+  uint8_t resvStr[MAX_MESSAGE_LENGTH] = {0};
+  int resvLength = 0;
+
+  struct sockaddr_in sockAddr;
+  sockAddr.sin_family = AF_INET;
+  sockAddr.sin_port = htons(6565);
+  uint32_t addr = inet_addr("192.168.10.97");
+  sockAddr.sin_addr.s_addr = addr;
+
+  SOCKET socket = (SOCKET)NULL;
+  int nError = 0;
+
   for(;;)
   {
 	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_SET);
 	  osDelay(1000);
 	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);
 	  osDelay(1000);
-	  if (usart_Send((char*)send, sizeof(send)-1))
-		  logger("SEND - %s", send);
-	  recvLength = usart_Recv((char*)recv, MAX_MESSAGE_LENGTH-1);
-	  if (recvLength)
+
+	  socket = socket(AF_INET, SOCK_STREAM, 0);
+	  nError = connect(socket, (struct sockaddr*)&sockAddr, sizeof(sockAddr));
+	  if (nError ==  0)
 	  {
-		  recv[recvLength] = 0;
-		  logger("RECV - %s\r\n", recv);
+		  nError = send(socket, sendStr, sizeof(sendStr)-1, 0);
+		  if (nError <  0)
+			  logger("SEND ERROR %d\n", nError);
+		  else
+		  {
+			  logger("SEND - %s\n", sendStr);
+			  resvLength = 0;
+			  while(resvLength < 1)
+				  resvLength = lwip_recv(socket, resvStr, sizeof(resvStr), MSG_WAITALL);
+			  resvStr[resvLength]=0;
+			  logger("GET - %s\n", resvStr);
+		  }
+		  lwip_close(socket);
 	  }
+	  else
+		  logger("CONNECT ERROR %d\n", nError);
   }
   /* USER CODE END 5 */
 }

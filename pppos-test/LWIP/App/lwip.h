@@ -42,7 +42,7 @@
 
 /* USER CODE BEGIN 0 */
 
- /* USER CODE END 0 */
+/* USER CODE END 0 */
 
 /* Global Variables ----------------------------------------------------------*/
 extern ETH_HandleTypeDef heth;
