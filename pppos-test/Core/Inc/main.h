@@ -31,7 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#define sys_jiffies sys_now // NEED TO LWIP-PPP FOR COMPILE
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
