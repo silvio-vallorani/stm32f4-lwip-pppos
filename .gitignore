@@ -55,4 +55,10 @@ dkms.conf
 /pppos-test/Debug
 /pppos-test/Release
 
+/pppos-f4disco/.settings
+/pppos-f4disco/Debug
+/pppos-f4disco/Release
 
+/STM32_PPP_Example/.settings
+/STM32_PPP_Example/Debug
+/STM32_PPP_Example/Release
