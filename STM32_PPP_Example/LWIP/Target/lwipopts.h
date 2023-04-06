@@ -41,6 +41,8 @@
 /* Parameters set in STM32CubeMX LwIP Configuration GUI -*/
 /*----- WITH_RTOS enabled (Since FREERTOS is set) -----*/
 #define WITH_RTOS 1
+/* Temporary workaround to avoid conflict on errno defined in STM32CubeIDE and lwip sys_arch.c errno */
+#undef LWIP_PROVIDE_ERRNO
 /*----- CHECKSUM_BY_HARDWARE enabled -----*/
 #define CHECKSUM_BY_HARDWARE 1
 /*-----------------------------------------------------------------------------*/
@@ -89,6 +91,18 @@
 #define DEFAULT_ACCEPTMBOX_SIZE 6
 /*----- Value in opt.h for RECV_BUFSIZE_DEFAULT: INT_MAX -----*/
 #define RECV_BUFSIZE_DEFAULT 2000000000
+/*----- Default Value for LWIP_INCLUDED_POLARSSL_MD4: 0 ---*/
+#define LWIP_INCLUDED_POLARSSL_MD4 1
+/*----- Default Value for LWIP_INCLUDED_POLARSSL_SHA1: 0 ---*/
+#define LWIP_INCLUDED_POLARSSL_SHA1 1
+/*----- Default Value for LWIP_INCLUDED_POLARSSL_DES: 0 ---*/
+#define LWIP_INCLUDED_POLARSSL_DES 1
+/*----- Default Value for LWIP_INCLUDED_POLARSSL_ARC4: 0 ---*/
+#define LWIP_INCLUDED_POLARSSL_ARC4 1
+/*----- Default Value for PAP_SUPPORT: 0 ---*/
+#define PAP_SUPPORT 1
+/*----- Default Value for CHAP_SUPPORT: 0 ---*/
+#define CHAP_SUPPORT 1
 /*----- Value in opt.h for LWIP_STATS: 1 -----*/
 #define LWIP_STATS 0
 /*----- Value in opt.h for CHECKSUM_GEN_IP: 1 -----*/

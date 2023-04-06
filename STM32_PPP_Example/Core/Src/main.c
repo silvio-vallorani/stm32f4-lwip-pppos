@@ -124,7 +124,7 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128*10);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 1280);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -319,6 +319,12 @@ static void MX_GPIO_Init(void)
 #include "usart.h"
 #include "sockets.h"
 typedef uint32_t SOCKET;
+const char AT_AT[] = "AT\x0D";
+const char AT_PPP_1[] = "AT+CGDCONT=1,\"IP\",\"ibox.tim.it\"\x0D";
+const char AT_PPP_2[] = "AT+CGAUTH=1,1,\"\",\"\"\x0D";
+const char AT_PPP_3[] = "AT+CGACT=1,1\x0D";
+const char AT_PPP_4[] = "AT+CIFSR\x0D";
+const char AT_PPP_ENABLE[] = "ATD*99***1#\x0D";
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -328,12 +334,6 @@ typedef uint32_t SOCKET;
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-char AT_AT[] = "AT\x0D";
-char AT_PPP_1[] = "AT+CGDCONT=1,\"IP\",\"ibox.tim.it\"\x0D";
-char AT_PPP_2[] = "AT+CGAUTH=1,1,\"\",\"\"\x0D";
-char AT_PPP_3[] = "AT+CGACT=1,1\x0D";
-char AT_PPP_4[] = "AT+CIFSR\x0D";
-char AT_PPP_ENABLE[] = "ATD*99***1#\x0D";
 void StartDefaultTask(void const * argument)
 {
   /* init code for LWIP */
@@ -341,25 +341,27 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
   usart_Open();
   osDelay(1000);
-  usart_Send(AT_AT, strlen(AT_AT));
+  usart_Send((char*)AT_AT, strlen(AT_AT));
   osDelay(1000);
-  usart_Send(AT_AT, strlen(AT_AT));
+  usart_Send((char*)AT_AT, strlen(AT_AT));
   osDelay(1000);
-  usart_Send(AT_AT, strlen(AT_AT));
+  usart_Send((char*)AT_AT, strlen(AT_AT));
   osDelay(1000);
-  usart_Send(AT_AT, strlen(AT_AT));
+  usart_Send((char*)AT_AT, strlen(AT_AT));
   osDelay(1000);
-  usart_Send(AT_PPP_1, strlen(AT_PPP_1));
+  usart_Send((char*)AT_PPP_1, strlen(AT_PPP_1));
   osDelay(1000);
-  usart_Send(AT_PPP_2, strlen(AT_PPP_2));
+  usart_Send((char*)AT_PPP_2, strlen(AT_PPP_2));
   osDelay(1000);
-  usart_Send(AT_PPP_3, strlen(AT_PPP_3));
+  usart_Send((char*)AT_PPP_3, strlen(AT_PPP_3));
   osDelay(1000);
-  usart_Send(AT_PPP_4, strlen(AT_PPP_4));
+  usart_Send((char*)AT_PPP_4, strlen(AT_PPP_4));
   osDelay(1000);
-  usart_Send(AT_PPP_ENABLE, strlen(AT_PPP_ENABLE));
+  usart_Send((char*)AT_PPP_ENABLE, strlen(AT_PPP_ENABLE));
   osDelay(5000);
   MX_LWIP_Init();
+  /* USER CODE BEGIN 5 */
+
   /* Infinite loop */
 
   uint8_t sendStr[] = "Test message TCP/IP.";
